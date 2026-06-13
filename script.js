@@ -251,14 +251,7 @@ if (form) {
 
       const formData = Object.fromEntries(new FormData(form));
 
-      if (formData.website) {
-        form.reset();
-        if (formStatus) {
-          formStatus.textContent = 'Thank you! Your message has been sent successfully.';
-          formStatus.classList.add('success');
-        }
-        return;
-      }
+
 
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
