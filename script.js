@@ -219,8 +219,6 @@ updateProjectStack();
 const form = document.getElementById('contactForm');
 const formStatus = document.getElementById('formStatus');
 
-const WEB3FORMS_ACCESS_KEY = '0122e2fe-a7a2-4705-b85a-22453c60bd9c';
-
 if (form) {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -249,30 +247,10 @@ if (form) {
         formStatus.className = 'form-status';
       }
 
-      const formData = Object.fromEntries(new FormData(form));
-
-
-
-      const response = await fetch('https://api.web3forms.com/submit', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          access_key: WEB3FORMS_ACCESS_KEY,
-          name: formData.fullName,
-          email: formData.emailAddress,
-          phone: formData.phoneNumber || 'Not provided',
-          subject: `Portfolio Contact: ${formData.subject || 'New Message'}`,
-          message: `Name: ${formData.fullName}
-Email: ${formData.emailAddress}
-Phone: ${formData.phoneNumber || 'Not provided'}
-Subject: ${formData.subject || 'New Message'}
-
-Message:
-${formData.message}`
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.fromEntries(new FormData(form)))
       });
 
       const result = await response.json().catch(() => ({}));
