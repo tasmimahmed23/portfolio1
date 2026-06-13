@@ -219,6 +219,8 @@ updateProjectStack();
 const form = document.getElementById('contactForm');
 const formStatus = document.getElementById('formStatus');
 
+const WEB3FORMS_ACCESS_KEY = '0122e2fe-a7a2-4705-b85a-22453c60bd9c';
+
 if (form) {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -247,10 +249,37 @@ if (form) {
         formStatus.className = 'form-status';
       }
 
-      const response = await fetch('/api/contact', {
+      const formData = Object.fromEntries(new FormData(form));
+
+      if (formData.website) {
+        form.reset();
+        if (formStatus) {
+          formStatus.textContent = 'Thank you! Your message has been sent successfully.';
+          formStatus.classList.add('success');
+        }
+        return;
+      }
+
+      const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(Object.fromEntries(new FormData(form)))
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          name: formData.fullName,
+          email: formData.emailAddress,
+          phone: formData.phoneNumber || 'Not provided',
+          subject: `Portfolio Contact: ${formData.subject || 'New Message'}`,
+          message: `Name: ${formData.fullName}
+Email: ${formData.emailAddress}
+Phone: ${formData.phoneNumber || 'Not provided'}
+Subject: ${formData.subject || 'New Message'}
+
+Message:
+${formData.message}`
+        })
       });
 
       const result = await response.json().catch(() => ({}));
